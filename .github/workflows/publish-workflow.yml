@@ -42,7 +42,7 @@ jobs:
           push: true
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
           file: frontend/Dockerfile
-          context: ./frontend
+          context: .
 
   deploy:
     needs: build-and-push
