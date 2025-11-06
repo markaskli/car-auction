@@ -60,7 +60,7 @@ jobs:
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           containerAppName: ${{ env.BACKEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-          location: "Sweden Central"
+          location: "swedencentral"
           targetPort: 8080
           environmentVariables: |
             ASPNETCORE_ENVIRONMENT=Production
@@ -71,7 +71,7 @@ jobs:
           resourceGroup: ${{ env.RESOURCE_GROUP }}
           containerAppName: ${{ env.FRONTEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
-          location: "Sweden Central"
+          location: "swedencentral"
           targetPort: 80
           ingress: external
           
