@@ -49,26 +49,55 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: Azure Login
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy backend to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
-          containerAppName: ${{ env.BACKEND_APP_NAME }}
-          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-          location: "swedencentral"
-          environmentVariables: |
-            ASPNETCORE_ENVIRONMENT=Production
+      # - name: Deploy backend to Azure Container Apps
+      #   uses: azure/container-apps-deploy-action@v1
+      #   with:
+      #     resourceGroup: ${{ env.RESOURCE_GROUP }}
+      #     containerAppName: ${{ env.BACKEND_APP_NAME }}
+      #     imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
+      #     location: "swedencentral"
+      #     environmentVariables: |
+      #       ASPNETCORE_ENVIRONMENT=Production
 
-      - name: Deploy nginx (frontend) to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          resourceGroup: ${{ env.RESOURCE_GROUP }}
-          containerAppName: ${{ env.NGINX_APP_NAME }}
-          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
-          location: "swedencentral"
-          ingress: external
+      # - name: Deploy nginx (frontend) to Azure Container Apps
+      #   uses: azure/container-apps-deploy-action@v1
+      #   with:
+      #     resourceGroup: ${{ env.RESOURCE_GROUP }}
+      #     containerAppName: ${{ env.NGINX_APP_NAME }}
+      #     imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
+      #     location: "swedencentral"
+      #     ingress: external
+
+        - name: 'Login via Azure CLI'
+          uses: azure/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+        - name: 'Deploy backend to Azure Container Instances'
+          uses: 'azure/aci-deploy@v1'
+          with:
+            resource-group: ${{ secrets.RESOURCE_GROUP }}
+            dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+            image: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
+            registry-login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+            registry-username: ${{ secrets.REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+            name: ${{ env.BACKEND_APP_NAME }}
+            location: "swedencentral"
+
+        - name: 'Deploy nginx (frontend) to Azure Container Instances'
+          uses: 'azure/aci-deploy@v1'
+          with:
+            resource-group: ${{ secrets.RESOURCE_GROUP }}
+            dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+            image: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
+            registry-login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
+            registry-username: ${{ secrets.REGISTRY_USERNAME }}
+            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
+            name: ${{ env.NGINX_APP_NAME }}
+            location: "swedencentral"
