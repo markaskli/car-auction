@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_CONTAINER_REGISTRY: carauctioncr-chahekdzazhva2cp
+  AZURE_CONTAINER_REGISTRY: carauctioncr
   RESOURCE_GROUP: car-auction
   BACKEND_APP_NAME: backend
   NGINX_APP_NAME: nginx
