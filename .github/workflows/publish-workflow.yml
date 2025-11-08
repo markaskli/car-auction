@@ -6,10 +6,10 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_CONTAINER_REGISTRY: carauctioncr-chahekdzazhva2cp      
+  AZURE_CONTAINER_REGISTRY: carauctioncr-chahekdzazhva2cp
   RESOURCE_GROUP: car-auction
-  BACKEND_APP_NAME: backend-app
-  FRONTEND_APP_NAME: frontend-app
+  BACKEND_APP_NAME: backend
+  NGINX_APP_NAME: nginx
 
 jobs:
   build-and-push:
@@ -61,17 +61,15 @@ jobs:
           containerAppName: ${{ env.BACKEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
           location: "swedencentral"
-          targetPort: 8080
           environmentVariables: |
             ASPNETCORE_ENVIRONMENT=Production
 
-      - name: Deploy frontend/nginx to Azure Container Apps
+      - name: Deploy nginx (frontend) to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
           resourceGroup: ${{ env.RESOURCE_GROUP }}
-          containerAppName: ${{ env.FRONTEND_APP_NAME }}
-          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
+          containerAppName: ${{ env.NGINX_APP_NAME }}
+          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
           location: "swedencentral"
-          targetPort: 80
           ingress: external
           
