@@ -7,97 +7,72 @@ on:
 
 env:
   AZURE_CONTAINER_REGISTRY: carauctioncr
-  RESOURCE_GROUP: car-auction-swedencentral
-  BACKEND_APP_NAME: backend
-  NGINX_APP_NAME: nginx
+  AZURE_CONTAINERAPPS_ENVIRONMENT: carauction-env
+  BACKEND_APP_NAME: backend-app
+  FRONTEND_APP_NAME: frontend-app
+  LOCATION: swedencentral
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3      
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to ACR
         uses: docker/login-action@v3
         with:
           registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        
-      - name: Build and push backend image
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-          file: backend/Dockerfile
-          context: ./backend
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      - name: Build and push frontend image
+      - name: Build and push backend
         uses: docker/build-push-action@v6
         with:
           push: true
+          context: ./backend
+          file: ./backend/Dockerfile
+          tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ./frontend
+          file: ./frontend/Dockerfile
           tags: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
-          file: frontend/Dockerfile
-          context: .
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-
     steps:
-      # - name: Azure Login
-      #   uses: azure/login@v2
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # - name: Deploy backend to Azure Container Apps
-      #   uses: azure/container-apps-deploy-action@v1
-      #   with:
-      #     resourceGroup: ${{ env.RESOURCE_GROUP }}
-      #     containerAppName: ${{ env.BACKEND_APP_NAME }}
-      #     imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-      #     location: "swedencentral"
-      #     environmentVariables: |
-      #       ASPNETCORE_ENVIRONMENT=Production
+      - name: Deploy backend
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          containerAppName: ${{ env.BACKEND_APP_NAME }}
+          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
+          environment: ${{ env.AZURE_CONTAINERAPPS_ENVIRONMENT }}
+          location: ${{ env.LOCATION }}
+          targetPort: 8080
+          ingress: internal
+          environmentVariables: |
+            ASPNETCORE_ENVIRONMENT=Production
 
-      # - name: Deploy nginx (frontend) to Azure Container Apps
-      #   uses: azure/container-apps-deploy-action@v1
-      #   with:
-      #     resourceGroup: ${{ env.RESOURCE_GROUP }}
-      #     containerAppName: ${{ env.NGINX_APP_NAME }}
-      #     imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
-      #     location: "swedencentral"
-      #     ingress: external
-
-        - name: 'Login via Azure CLI'
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-        - name: 'Deploy backend to Azure Container Instances'
-          uses: 'azure/aci-deploy@v1'
-          with:
-            resource-group: ${{ secrets.RESOURCE_GROUP }}
-            dns-name-label: ${{ secrets.RESOURCE_GROUP }}-backend-${{ github.run_number }}
-            image: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-            registry-login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
-            registry-username: ${{ secrets.REGISTRY_USERNAME }}
-            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-            name: ${{ env.BACKEND_APP_NAME }}
-            location: "swedencentral"
-
-        - name: 'Deploy nginx (frontend) to Azure Container Instances'
-          uses: 'azure/aci-deploy@v1'
-          with:
-            resource-group: ${{ secrets.RESOURCE_GROUP }}
-            dns-name-label: ${{ secrets.RESOURCE_GROUP }}-frontend-${{ github.run_number }}
-            image: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
-            registry-login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
-            registry-username: ${{ secrets.REGISTRY_USERNAME }}
-            registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-            name: ${{ env.NGINX_APP_NAME }}
-            location: "swedencentral"
+      - name: Deploy frontend
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          containerAppName: ${{ env.FRONTEND_APP_NAME }}
+          imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
+          environment: ${{ env.AZURE_CONTAINERAPPS_ENVIRONMENT }}
+          location: ${{ env.LOCATION }}
+          ingress: external
+          targetPort: 80
