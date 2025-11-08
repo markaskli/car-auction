@@ -72,4 +72,3 @@ jobs:
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
           location: "swedencentral"
           ingress: external
-          
