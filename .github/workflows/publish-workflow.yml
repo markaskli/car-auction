@@ -7,7 +7,7 @@ on:
 
 env:
   AZURE_CONTAINER_REGISTRY: carauctioncr
-  RESOURCE_GROUP: car-auction
+  RESOURCE_GROUP: car-auction-swedencentral
   BACKEND_APP_NAME: backend
   NGINX_APP_NAME: nginx
 
