@@ -82,7 +82,7 @@ jobs:
           uses: 'azure/aci-deploy@v1'
           with:
             resource-group: ${{ secrets.RESOURCE_GROUP }}
-            dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+            dns-name-label: ${{ secrets.RESOURCE_GROUP }}-backend-${{ github.run_number }}
             image: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
             registry-login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
             registry-username: ${{ secrets.REGISTRY_USERNAME }}
@@ -94,7 +94,7 @@ jobs:
           uses: 'azure/aci-deploy@v1'
           with:
             resource-group: ${{ secrets.RESOURCE_GROUP }}
-            dns-name-label: ${{ secrets.RESOURCE_GROUP }}${{ github.run_number }}
+            dns-name-label: ${{ secrets.RESOURCE_GROUP }}-frontend-${{ github.run_number }}
             image: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/nginx:${{ github.sha }}
             registry-login-server: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
             registry-username: ${{ secrets.REGISTRY_USERNAME }}
