@@ -7,7 +7,6 @@ on:
 
 env:
   AZURE_CONTAINER_REGISTRY: carauctioncr
-  AZURE_CONTAINERAPPS_ENVIRONMENT: carauction-env
   BACKEND_APP_NAME: backend-app
   FRONTEND_APP_NAME: frontend-app
   LOCATION: swedencentral
@@ -56,10 +55,9 @@ jobs:
       - name: Deploy backend
         uses: azure/container-apps-deploy-action@v1
         with:
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          resourceGroup: ${{ secrets.RESOURCE_GROUP }}
           containerAppName: ${{ env.BACKEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-          environment: ${{ env.AZURE_CONTAINERAPPS_ENVIRONMENT }}
           location: ${{ env.LOCATION }}
           targetPort: 8080
           ingress: internal
@@ -69,10 +67,9 @@ jobs:
       - name: Deploy frontend
         uses: azure/container-apps-deploy-action@v1
         with:
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          resourceGroup: ${{ secrets.RESOURCE_GROUP }}
           containerAppName: ${{ env.FRONTEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
-          environment: ${{ env.AZURE_CONTAINERAPPS_ENVIRONMENT }}
           location: ${{ env.LOCATION }}
           ingress: external
           targetPort: 80
