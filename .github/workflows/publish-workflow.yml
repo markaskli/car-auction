@@ -61,8 +61,6 @@ jobs:
           acrUsername: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           acrPassword: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
           location: ${{ env.LOCATION }}
-          targetPort: 8080
-          ingress: internal
           environmentVariables: |
             ASPNETCORE_ENVIRONMENT=Production
 
@@ -75,5 +73,3 @@ jobs:
           acrUsername: ${{ secrets.AZURE_REGISTRY_USERNAME }}
           acrPassword: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
           location: ${{ env.LOCATION }}
-          ingress: external
-          targetPort: 80
