@@ -58,8 +58,8 @@ jobs:
           resourceGroup: ${{ secrets.RESOURCE_GROUP }}
           containerAppName: ${{ env.BACKEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/backend:${{ github.sha }}
-          acrUsername: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          acrPassword: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+          acrUsername: ${{ secrets.ACR_USERNAME }}
+          acrPassword: ${{ secrets.ACR_PASSWORD }}
           location: ${{ env.LOCATION }}
           environmentVariables: |
             ASPNETCORE_ENVIRONMENT=Production
@@ -70,6 +70,6 @@ jobs:
           resourceGroup: ${{ secrets.RESOURCE_GROUP }}
           containerAppName: ${{ env.FRONTEND_APP_NAME }}
           imageToDeploy: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/frontend:${{ github.sha }}
-          acrUsername: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          acrPassword: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+          acrUsername: ${{ secrets.ACR_USERNAME }}
+          acrPassword: ${{ secrets.ACR_PASSWORD }}
           location: ${{ env.LOCATION }}
