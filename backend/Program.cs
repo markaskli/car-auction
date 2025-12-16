@@ -14,6 +14,19 @@ namespace CarAuction_BE
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy
+                        .WithOrigins(
+                            "http://localhost:8000"
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -21,6 +34,7 @@ namespace CarAuction_BE
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseCors("AllowFrontend");
             }
 
             app.UseHttpsRedirection();
@@ -32,7 +46,7 @@ namespace CarAuction_BE
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             };
 
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+            app.MapGet("api/weatherforecast", (HttpContext httpContext) =>
             {
                 var forecast = Enumerable.Range(1, 5).Select(index =>
                     new WeatherForecast
