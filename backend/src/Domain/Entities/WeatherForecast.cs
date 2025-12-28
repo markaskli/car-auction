@@ -1,6 +1,6 @@
-namespace CarAuction_BE
+namespace CarAuction.Api.Domain.Entities
 {
-    public class WeatherForecast
+    public class WeatherForecast : BaseEntity
     {
         public DateOnly Date { get; set; }
 

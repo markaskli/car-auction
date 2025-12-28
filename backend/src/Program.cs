@@ -1,5 +1,10 @@
+using Asp.Versioning;
+using CarAuction.Api.Common.Extensions;
+using CarAuction.Api.Persistence;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
-namespace CarAuction_BE
+namespace CarAuction.Api
 {
     public class Program
     {
@@ -9,6 +14,25 @@ namespace CarAuction_BE
 
             // Add services to the container.
             builder.Services.AddAuthorization();
+
+            builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+            //builder.Services.AddDbContext<CarAuctionDbContext>(opt => 
+            //    opt.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1);
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
+            })
+            .AddApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'V";
+                options.SubstituteApiVersionInUrl = true;
+            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -27,6 +51,8 @@ namespace CarAuction_BE
                 });
             });
 
+            builder.Services.AddEndpoints();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -41,25 +67,7 @@ namespace CarAuction_BE
 
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("api/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
+            app.MapEndpoints();
 
             app.Run();
         }
