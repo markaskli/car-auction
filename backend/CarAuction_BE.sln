@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35806.99 d17.13
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAuction_BE", "CarAuction_BE.csproj", "{A292B017-FE04-4FC9-8514-5731E1B144FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\CarAuction.Tests.csproj", "{F13D9727-6D15-4A18-A687-F06D5AF1084C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src", "src\CarAuction.Api.csproj", "{E5E3DE69-6035-49CF-AD0B-432EFA34551E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A292B017-FE04-4FC9-8514-5731E1B144FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A292B017-FE04-4FC9-8514-5731E1B144FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A292B017-FE04-4FC9-8514-5731E1B144FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A292B017-FE04-4FC9-8514-5731E1B144FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F13D9727-6D15-4A18-A687-F06D5AF1084C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F13D9727-6D15-4A18-A687-F06D5AF1084C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F13D9727-6D15-4A18-A687-F06D5AF1084C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F13D9727-6D15-4A18-A687-F06D5AF1084C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5E3DE69-6035-49CF-AD0B-432EFA34551E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5E3DE69-6035-49CF-AD0B-432EFA34551E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5E3DE69-6035-49CF-AD0B-432EFA34551E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5E3DE69-6035-49CF-AD0B-432EFA34551E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
