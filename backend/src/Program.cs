@@ -47,7 +47,8 @@ namespace CarAuction.Api
                             "http://localhost:8000"
                         )
                         .AllowAnyHeader()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowCredentials();
                 });
             });
 
