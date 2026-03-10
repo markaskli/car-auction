@@ -1,18 +1,22 @@
-﻿using FluentValidation;
+﻿using CarAuction.Api.Common;
+using CarAuction.Api.Extensions;
+using FluentValidation;
 using MediatR;
 
 namespace CarAuction.Api.Features.WeatherForecast
 {
-    public record GetWeatherForecastQuery : IRequest<Domain.Entities.WeatherForecast[]>;
+    public record GetWeatherForecastQuery : IRequest<Result<Domain.Entities.WeatherForecast[]>>;
 
     public class GetWeatherForecastQueryValidator : AbstractValidator<GetWeatherForecastQuery>
     {
-
+        public GetWeatherForecastQueryValidator()
+        {
+        }
     }
 
-    internal sealed class GetWeatherForecastQueryHandler : IRequestHandler<GetWeatherForecastQuery, Domain.Entities.WeatherForecast[]>
+    internal sealed class GetWeatherForecastQueryHandler : IRequestHandler<GetWeatherForecastQuery, Result<Domain.Entities.WeatherForecast[]>>
     {
-        public async Task<Domain.Entities.WeatherForecast[]> Handle(GetWeatherForecastQuery request, CancellationToken cancellationToken)
+        public async Task<Result<Domain.Entities.WeatherForecast[]>> Handle(GetWeatherForecastQuery request, CancellationToken cancellationToken)
         {
             var summaries = new[]
             {
@@ -43,14 +47,9 @@ namespace CarAuction.Api.Features.WeatherForecast
 
         private static async Task<IResult> Handle(IMediator mediator)
         {
-            var weatherForecast = await mediator.Send(new GetWeatherForecastQuery());
+            var result = await mediator.Send(new GetWeatherForecastQuery());
 
-            if (weatherForecast == null)
-            {
-                return Results.NotFound();
-            }
-
-            return Results.Ok(weatherForecast);
+            return result.Match(Results.Ok, ApiResults.Problem);
         }
     }
 }

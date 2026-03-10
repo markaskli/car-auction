@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CarAuction.Api.Common
+namespace CarAuction.Api.Middlewares
 {
     public class GlobalExceptionHandler : IExceptionHandler
     {
@@ -11,15 +11,18 @@ namespace CarAuction.Api.Common
             _logger = logger;
         }
 
-        public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+        public async ValueTask<bool> TryHandleAsync(
+            HttpContext httpContext,
+            Exception exception,
+            CancellationToken cancellationToken)
         {
             _logger.LogError(exception, "Exception occurred {Message}", exception.Message);
 
             var problemDetails = new ProblemDetails()
             {
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
-                Title = "Server Error",
                 Status = StatusCodes.Status500InternalServerError,
+                Title = "Server Error",
                 Detail = "An unexpected error occurred. Please try again later."
             };
 

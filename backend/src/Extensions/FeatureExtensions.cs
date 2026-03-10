@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
 
-namespace CarAuction.Api.Common.Extensions
+namespace CarAuction.Api.Extensions
 {
     public static class FeatureExtensions
     {

@@ -1,8 +1,8 @@
 using Asp.Versioning;
-using CarAuction.Api.Common.Extensions;
-using CarAuction.Api.Persistence;
+using CarAuction.Api.Common;
+using CarAuction.Api.Extensions;
+using CarAuction.Api.Middlewares;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace CarAuction.Api
 {
@@ -12,11 +12,16 @@ namespace CarAuction.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddAuthorization();
-
-            builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+            builder.Services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(typeof(Program).Assembly);
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
             builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+            builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
             //builder.Services.AddDbContext<CarAuctionDbContext>(opt => 
             //    opt.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
             builder.Services.AddHttpContextAccessor();
@@ -63,6 +68,8 @@ namespace CarAuction.Api
                 app.UseSwaggerUI();
                 app.UseCors("AllowFrontend");
             }
+
+            app.UseExceptionHandler();
 
             app.UseHttpsRedirection();
 
