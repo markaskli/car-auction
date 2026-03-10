@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common\NewFolder\" />
     <Folder Include="Persistence\Migrations\" />
     <Folder Include="Persistence\Configurations\" />
   </ItemGroup>
