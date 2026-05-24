@@ -16,8 +16,7 @@ namespace CarAuction.Api.Extensions
             this IServiceCollection services,
             Assembly assembly)
         {
-            var serviceDescriptors = assembly
-                .DefinedTypes
+            var serviceDescriptors = assembly.DefinedTypes
                 .Where(t => !t.IsAbstract && typeof(IFeature).IsAssignableFrom(t))
                 .Select(t => ServiceDescriptor.Transient(typeof(IFeature), t))
                 .ToArray();

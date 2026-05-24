@@ -1,7 +1,7 @@
 ﻿using CarAuction.Api.Common;
 using CarAuction.Api.Extensions;
 using FluentValidation;
-using MediatR;
+using Mediator;
 
 namespace CarAuction.Api.Features.WeatherForecast
 {
@@ -16,7 +16,7 @@ namespace CarAuction.Api.Features.WeatherForecast
 
     internal sealed class GetWeatherForecastQueryHandler : IRequestHandler<GetWeatherForecastQuery, Result<Domain.Entities.WeatherForecast[]>>
     {
-        public async Task<Result<Domain.Entities.WeatherForecast[]>> Handle(GetWeatherForecastQuery request, CancellationToken cancellationToken)
+        public async ValueTask<Result<Domain.Entities.WeatherForecast[]>> Handle(GetWeatherForecastQuery request, CancellationToken cancellationToken)
         {
             var summaries = new[]
             {
@@ -45,9 +45,9 @@ namespace CarAuction.Api.Features.WeatherForecast
                 .WithName("GetWeatherForecast");
         }
 
-        private static async Task<IResult> Handle(IMediator mediator)
+        private static async Task<IResult> Handle(ISender sender)
         {
-            var result = await mediator.Send(new GetWeatherForecastQuery());
+            var result = await sender.Send(new GetWeatherForecastQuery());
 
             return result.Match(Results.Ok, ApiResults.Problem);
         }

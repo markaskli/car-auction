@@ -2,7 +2,12 @@ using Asp.Versioning;
 using CarAuction.Api.Common;
 using CarAuction.Api.Extensions;
 using CarAuction.Api.Middlewares;
+using CarAuction.Api.Persistence;
 using FluentValidation;
+using Mediator;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CarAuction.Api
 {
@@ -12,19 +17,35 @@ namespace CarAuction.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddAuthorization();
-            builder.Services.AddMediatR(config =>
+            builder.Services.AddMediator((MediatorOptions options) =>
             {
-                config.RegisterServicesFromAssembly(typeof(Program).Assembly);
-                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                options.Assemblies = [typeof(Program).Assembly];
+                options.PipelineBehaviors = [typeof(ValidationBehavior<,>)];
             });
-            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
+            builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly, ServiceLifetime.Singleton);
             builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
-            //builder.Services.AddDbContext<CarAuctionDbContext>(opt => 
-            //    opt.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+
+            builder.Services.AddDbContext<CarAuctionDbContext>(opt =>
+                opt.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]));
             builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddSwaggerGenWithAuthSupport(builder.Configuration);
+            builder.Services.AddAuthorization();
+            builder.Services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false; // dev
+                    options.Audience = builder.Configuration["Authentication:ValidAudience"];
+                    options.MetadataAddress = builder.Configuration["Authentication:MetadataAddress"]!;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = builder.Configuration["Authentication:ValidIssuer"],
+                    };
+                });
+
 
             builder.Services.AddApiVersioning(options =>
             {
@@ -65,7 +86,10 @@ namespace CarAuction.Api
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(o =>
+                {
+                    //o.OAuthUsePkce();
+                });
                 app.UseCors("AllowFrontend");
             }
 
@@ -73,6 +97,7 @@ namespace CarAuction.Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapEndpoints();
