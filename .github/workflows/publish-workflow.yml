@@ -63,6 +63,8 @@ jobs:
           location: ${{ env.LOCATION }}
           environmentVariables: |
             ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}
+            Authentication__MetadataAddress=${{ secrets.KEYCLOAK_URL }}/realms/car-auction/.well-known/openid-configuration
+            Authentication__ValidIssuer=${{ secrets.KEYCLOAK_URL }}/realms/car-auction
             ASPNETCORE_ENVIRONMENT=Production
 
       - name: Deploy frontend
@@ -75,8 +77,8 @@ jobs:
           location: ${{ env.LOCATION }}
           targetPort: 80
           environmentVariables: |
-            VITE_API_URL=${{ secrets.VITE_API_URL }}
-            VITE_KEYCLOAK_URL=${{ secrets.VITE_KEYCLOAK_URL }}
+            VITE_API_URL=${{ secrets.API_URL }}
+            VITE_KEYCLOAK_URL=${{ secrets.KEYCLOAK_URL }}
             VITE_KEYCLOAK_REALM=car-auction
             VITE_KEYCLOAK_CLIENT_ID=react-client
 

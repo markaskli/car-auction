@@ -37,7 +37,7 @@ namespace CarAuction.Api
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.RequireHttpsMetadata = false; // dev
+                    options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
                     options.Audience = builder.Configuration["Authentication:ValidAudience"];
                     options.MetadataAddress = builder.Configuration["Authentication:MetadataAddress"]!;
                     options.TokenValidationParameters = new TokenValidationParameters
