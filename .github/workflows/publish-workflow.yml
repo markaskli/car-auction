@@ -62,7 +62,6 @@ jobs:
           ingress: internal
           location: ${{ env.LOCATION }}
           environmentVariables: |
-            ConnectionStrings__DefaultConnection="${{ secrets.DB_CONNECTION_STRING }}"
             Authentication__MetadataAddress=${{ secrets.KEYCLOAK_URL }}/realms/car-auction/.well-known/openid-configuration
             Authentication__ValidIssuer=${{ secrets.KEYCLOAK_URL }}/realms/car-auction
             ASPNETCORE_ENVIRONMENT=Production
